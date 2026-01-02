@@ -85,17 +85,17 @@ Final rule:
 
 ---
 
-📦 Installation
+## 📦 Installation
 
 pip install pandas numpy matplotlib seaborn requests beautifulsoup4 scikit-learn lxml
 
 
-▶️ Run the Project
+## ▶️ Run the Project
 
 python project4.py
 
 
-🌐 Analysis Workflow
+## 🌐 Analysis Workflow
 
 •The program follows this workflow:
 
@@ -117,23 +117,25 @@ python project4.py
 
 •Visualize the results interactively
 
-🖥️ Output
+
+## 🖥️ Output
 
 The program does not save any files by default
 
 It displays the following outputs on the screen:
 
-     •Raw scraped data preview
+    •Raw scraped data preview
 
-     •Cleaned dataset preview
+    •Cleaned dataset preview
 
-     •Summary statistics
+    •Summary statistics
 
-     •Number of detected anomalies
+    •Number of detected anomalies
 
-     •Interactive plots and charts
+    •Interactive plots and charts
 
-🛠️ Technologies Used
+
+## 🛠️ Technologies Used
 
   •Python 3.10+
 
