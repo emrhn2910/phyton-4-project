@@ -101,60 +101,60 @@ python project4.py
 
 🌐 Analysis Workflow
 
-•Analyze a clean downloaded baseline dataset
+ •Analyze a clean downloaded baseline dataset
 
-•Display baseline summary statistics
+ •Display baseline summary statistics
 
-•Scrape GDP data from the web
+ •Scrape GDP data from the web
 
-•Parse and evaluate all HTML tables
+ •Parse and evaluate all HTML tables
 
-•Automatically select the best GDP table
+ •Automatically select the best GDP table
 
-•Clean and normalize messy values
+ •Clean and normalize messy values
 
-•Compute statistical summaries
+ •Compute statistical summaries
 
-•Detect anomalies using multiple methods
+ •Detect anomalies using multiple methods
 
-•Visualize results interactively
+ •Visualize results interactively
 
 
 🖥️ Output
 
-•The program does not save any files by default.
+ •The program does not save any files by default.
 
-•It displays:
+ •It displays:
 
-•Raw scraped data preview
+ •Raw scraped data preview
 
-•Cleaned dataset preview
+ •Cleaned dataset preview
 
-•Summary statistics
+ •Summary statistics
 
-•Number of detected anomalies
+ •Number of detected anomalies
 
-•Interactive plots and charts
+ •Interactive plots and charts
 
 
 📦 Technologies Used
 
-•Python 3.10+
+ •Python 3.10+
 
-•Pandas
+ •Pandas
 
-•NumPy
+ •NumPy
 
-•Requests
+ •Requests
 
-•BeautifulSoup (bs4)
+ •BeautifulSoup (bs4)
 
-•lxml
+ •lxml
 
-•Matplotlib
+ •Matplotlib
 
-•Seaborn
+ •Seaborn
 
-•Scikit-learn (Isolation Forest)
+ •Scikit-learn (Isolation Forest)
 
 
