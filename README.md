@@ -59,12 +59,9 @@ A country is marked as an anomaly if **at least two methods agree**.
 
 ---
 
-## 🏗️ Project Architecture Overview
-
-project/
-│── project4.py # Main Python script
-│── README.md # Project documentation
-
+## 🏗️ Project Architecture Overviewproject/
+├── project4.py        # Main Python script
+└── README.md          # Project documentation
 
 All scraping, cleaning, analysis, anomaly detection, and visualization steps are handled inside a single Python file.
 
