@@ -1,4 +1,3 @@
-import pandas as pd
 from sklearn.ensemble import IsolationForest
 
 def compute_stats(x):
@@ -19,13 +18,11 @@ def add_anomaly_flags(df):
     iqr = q3 - q1
 
     df["anomaly_iqr"] = (x < q1 - 1.5 * iqr) | (x > q3 + 1.5 * iqr)
-
     z = (x - x.mean()) / x.std()
     df["anomaly_z"] = z.abs() >= 3
 
     iso = IsolationForest(random_state=42)
     df["anomaly_iso"] = iso.fit_predict(df[["value"]]) == -1
-
     df["anomaly_final"] = (
         df[["anomaly_iqr", "anomaly_z", "anomaly_iso"]].sum(axis=1) >= 2
     )

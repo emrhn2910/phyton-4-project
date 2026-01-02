@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from baseline import analyze_clean_downloaded_data
 from scraper import scrape_table
 from cleaning import build_clean_frame
