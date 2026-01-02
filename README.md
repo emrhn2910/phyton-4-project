@@ -136,6 +136,12 @@ It displays the following outputs on the screen:
 
 ## 🛠️ Technologies Used
 
+
+## 🎥 Project Videos
+[Full Code Video](./full_code.mp4)  
+[Main Script Video](./main_demo.mp4)
+
+
   •Python 3.10+
 
   •Pandas
