@@ -1,0 +1,198 @@
+import re
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.ensemble import IsolationForest
+from bs4 import BeautifulSoup
+import requests
+from io import StringIO
+
+def remove_footnotes(x):
+    return re.sub(r"\[[^\]]*\]", "", str(x)).strip()
+
+def to_number(x):
+    if pd.isna(x):
+        return np.nan
+    s = remove_footnotes(x)
+    s = s.replace(",", "").replace("%", "").strip()
+    s = re.sub(r"[^0-9\.\-]", "", s)
+    if s in ("", "-", "."):
+        return np.nan
+    try:
+        return float(s)
+    except:
+        return np.nan
+
+def analyze_clean_downloaded_data():
+    data = {
+        "country": ["USA", "China", "Germany", "Japan", "India"],
+        "gdp": [31821293, 20650754, 5328184, 4463634, 4226738]
+    }
+    df = pd.DataFrame(data)
+
+    print("\n[BASELINE] Clean downloaded dataset analysis")
+    print(df.to_string(index=False))
+    print("Mean GDP:", df["gdp"].mean())
+    print("Min GDP:", df["gdp"].min())
+    print("Max GDP:", df["gdp"].max())
+
+def scrape_table(url):
+    headers = {"User-Agent": "Mozilla/5.0"}
+    res = requests.get(url, headers=headers, timeout=30)
+    res.raise_for_status()
+    soup = BeautifulSoup(res.text, "lxml")
+
+    tables = soup.find_all("table")
+    if not tables:
+        raise RuntimeError("No tables found on the page.")
+
+    best_df = None
+    best_score = -1
+
+    for t in tables:
+        try:
+            df_list = pd.read_html(StringIO(str(t)))
+            if not df_list:
+                continue
+            df = df_list[0]
+        except Exception:
+            continue
+
+        if df.shape[0] < 10 or df.shape[1] < 2:
+            continue
+
+        numeric_like = 0
+        for col in df.columns:
+            tmp = df[col].apply(to_number)
+            if tmp.notna().mean() >= 0.5:
+                numeric_like += 1
+
+        score = df.shape[0] * df.shape[1] + numeric_like * 200
+        if score > best_score:
+            best_score = score
+            best_df = df
+
+    if best_df is None:
+        raise RuntimeError("Could not find a suitable data table on the page.")
+    return best_df
+
+def pick_best_numeric_column(df):
+    best_col, best_ratio = None, -1
+    for col in df.columns:
+        tmp = df[col].apply(to_number)
+        ratio = tmp.notna().mean()
+        if ratio > best_ratio:
+            best_ratio = ratio
+            best_col = col
+    return best_col
+
+def build_clean_frame(df_raw):
+    df = df_raw.copy()
+    for c in df.columns:
+        df[c] = df[c].apply(remove_footnotes)
+
+    num_col = pick_best_numeric_column(df)
+    df["value"] = df[num_col].apply(to_number)
+
+    label_col = df.columns[0]
+    df["label"] = df[label_col].astype(str).str.strip()
+
+    df = df.dropna(subset=["value"])
+    df = df[df["label"] != ""]
+    df = df[["label", "value"]].drop_duplicates(subset=["label"]).reset_index(drop=True)
+    df = df.sort_values("value", ascending=False).reset_index(drop=True)
+    return df
+
+def compute_stats(x):
+    return {
+        "count": int(x.count()),
+        "mean": float(x.mean()),
+        "std": float(x.std(ddof=1)),
+        "min": float(x.min()),
+        "max": float(x.max()),
+        "q1": float(x.quantile(0.25)),
+        "median": float(x.quantile(0.50)),
+        "q3": float(x.quantile(0.75)),
+        "iqr": float(x.quantile(0.75) - x.quantile(0.25)),
+    }
+
+def add_anomaly_flags(df):
+    x = df["value"].astype(float)
+    q1, q3 = x.quantile(0.25), x.quantile(0.75)
+    iqr = q3 - q1
+    df["anomaly_iqr"] = (x < q1 - 1.5 * iqr) | (x > q3 + 1.5 * iqr)
+
+    denom = x.std(ddof=1) if x.std(ddof=1) != 0 else 1.0
+    z = (x - x.mean()) / denom
+    df["z_score"] = z
+    df["anomaly_z"] = z.abs() >= 3
+
+    iso = IsolationForest(n_estimators=200, random_state=42, contamination="auto")
+    df["anomaly_iso"] = iso.fit_predict(df[["value"]]) == -1
+
+    df["anomaly_final"] = (
+        df["anomaly_iqr"].astype(int)
+        + df["anomaly_z"].astype(int)
+        + df["anomaly_iso"].astype(int)
+    ) >= 2
+    return df
+
+def show_plots(df, top_n=15):
+    sns.set_theme()
+
+    plt.figure()
+    plt.hist(df["value"], bins=30)
+    plt.title("Distribution")
+    plt.show()
+
+    plt.figure()
+    sns.boxplot(x=df["value"])
+    plt.title("Box Plot")
+    plt.show()
+
+    plt.figure()
+    sns.histplot(df["value"], kde=True)
+    plt.title("Histogram + KDE")
+    plt.show()
+
+    top = df.head(top_n).iloc[::-1]
+    plt.figure(figsize=(9, 6))
+    sns.barplot(data=top, x="value", y="label")
+    plt.title(f"Top {top_n}")
+    plt.show()
+
+    tmp = df.reset_index().rename(columns={"index": "row"})
+    plt.figure(figsize=(10, 4))
+    sns.scatterplot(data=tmp, x="row", y="value", hue="anomaly_final")
+    plt.title("Anomaly Detection")
+    plt.show()
+
+def main():
+    analyze_clean_downloaded_data()
+
+    url = "https://en.wikipedia.org/wiki/List_of_countries_by_GDP_(nominal)"
+    raw = scrape_table(url)
+
+    print("\nRaw shape:", raw.shape)
+    print(raw.head(5).to_string(index=False))
+
+    clean = build_clean_frame(raw)
+    print("\nClean shape:", clean.shape)
+    print(clean.head(10).to_string(index=False))
+
+    stats = compute_stats(clean["value"])
+    print("\nSummary Statistics:")
+    for k, v in stats.items():
+        print(f"{k}: {v}")
+
+    analyzed = add_anomaly_flags(clean.copy())
+    anomalies = analyzed[analyzed["anomaly_final"]]
+    print("\nAnomalies Found:", len(anomalies))
+    if len(anomalies) > 0:
+        print(anomalies.head(10)[["label", "value"]].to_string(index=False))
+
+    show_plots(analyzed)
+
+if __name__ == "__main__":
+    main()
