@@ -85,79 +85,78 @@ Final rule:
 
 ---
 
-## 🛠️ Installation
+📦 Installation
 
-### 1️⃣ Install dependencies
-
-```bash
 pip install pandas numpy matplotlib seaborn requests beautifulsoup4 scikit-learn lxml
 
 
-2️⃣ Run the project
+▶️ Run the Project
 
 python project4.py
 
 
-
 🌐 Analysis Workflow
 
- •Analyze a clean downloaded baseline dataset
+•The program follows this workflow:
 
- •Display baseline summary statistics
+•Analyze a clean, downloaded baseline dataset
 
- •Scrape GDP data from the web
+•Display baseline summary statistics
 
- •Parse and evaluate all HTML tables
+•Scrape GDP data from the web
 
- •Automatically select the best GDP table
+•Parse and evaluate all HTML tables
 
- •Clean and normalize messy values
+•Automatically select the most relevant GDP table
 
- •Compute statistical summaries
+•Clean and normalize messy or inconsistent values
 
- •Detect anomalies using multiple methods
+•Compute statistical summaries
 
- •Visualize results interactively
+•Detect anomalies using multiple methods
 
+•Visualize the results interactively
 
 🖥️ Output
 
- •The program does not save any files by default.
+The program does not save any files by default
 
- •It displays:
+It displays the following outputs on the screen:
 
- •Raw scraped data preview
+     •Raw scraped data preview
 
- •Cleaned dataset preview
+     •Cleaned dataset preview
 
- •Summary statistics
+     •Summary statistics
 
- •Number of detected anomalies
+     •Number of detected anomalies
 
- •Interactive plots and charts
+     •Interactive plots and charts
+
+🛠️ Technologies Used
+
+  •Python 3.10+
+
+  •Pandas
+
+  •NumPy
+
+  •Requests
+
+  •BeautifulSoup (bs4)
+
+  •lxml
+
+  •Matplotlib
+
+  •Seaborn
+
+  •Scikit-learn (Isolation Forest)
+
+  
 
 
-📦 Technologies Used
-
- •Python 3.10+
-
- •Pandas
-
- •NumPy
-
- •Requests
-
- •BeautifulSoup (bs4)
-
- •lxml
-
- •Matplotlib
-
- •Seaborn
-
- •Scikit-learn (Isolation Forest)
 
 
- 
 
 
