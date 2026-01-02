@@ -123,15 +123,11 @@ The program does not save any files by default
 
 It displays the following outputs on the screen:
 
-    •Raw scraped data preview
-
-    •Cleaned dataset preview
-
-    •Summary statistics
-
-    •Number of detected anomalies
-
-    •Interactive plots and charts
+•Raw scraped data preview
+•Cleaned dataset preview
+•Summary statistics
+•Number of detected anomalies
+•Interactive plots and charts
 
 
 ## 🛠️ Technologies Used
